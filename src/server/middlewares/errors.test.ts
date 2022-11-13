@@ -2,7 +2,7 @@ import type { Response } from "express";
 import CustomError from "../../CustomError/CustomError";
 import { generalError, notFoundError } from "./errors";
 
-describe("Given a notFoundPage middleware", () => {
+describe("Given a notFoundError middleware", () => {
   describe("When it receives a request", () => {
     const expectedMessage = {
       message: "Endpoint not found",
@@ -13,7 +13,7 @@ describe("Given a notFoundPage middleware", () => {
     };
     const expectedStatus = 404;
 
-    test("Then it should call its method status with a 200", () => {
+    test("Then it should call its method status with a 404", () => {
       notFoundError(null, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
