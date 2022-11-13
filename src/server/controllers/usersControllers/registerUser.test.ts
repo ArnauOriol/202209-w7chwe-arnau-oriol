@@ -18,7 +18,6 @@ describe("Given a registerUser controller", () => {
         username: "Arnau",
         password: "1234",
         email: "123@arnau.com",
-        picture: "arnau.webp",
       };
       const req: Partial<Request> = {
         body: registerData,
@@ -40,7 +39,6 @@ describe("Given a registerUser controller", () => {
         user: {
           username: registerData.username,
           email: registerData.email,
-          picture: registerData.picture,
           id: userId,
         },
       });
@@ -53,7 +51,6 @@ describe("Given a registerUser controller", () => {
         username: "Arnau",
         password: "1234",
         email: "123@arnau.com",
-        picture: "arnau.webp",
       };
       const req: Partial<Request> = {
         body: registerData,
