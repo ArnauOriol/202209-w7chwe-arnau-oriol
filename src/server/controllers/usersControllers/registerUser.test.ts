@@ -11,7 +11,7 @@ const res: Partial<Response> = {
 };
 
 describe("Given a registerUser controller", () => {
-  describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com", () => {
+  describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com and is not in the database", () => {
     test("Then its method status should be called with a 201 and its method json should be called with Arnau data", async () => {
       const expectedStatusCode = 201;
       const registerData: RegisterData = {
@@ -47,7 +47,7 @@ describe("Given a registerUser controller", () => {
     });
   });
 
-  describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com and it is not in the database", () => {
+  describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com and it already is in the database", () => {
     test("Then it should call the next function with a CustomError", async () => {
       const registerData: RegisterData = {
         username: "Arnau",
