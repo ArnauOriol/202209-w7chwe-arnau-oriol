@@ -9,7 +9,7 @@ const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { username, password, email, picture } = req.body as RegisterData;
+  const { username, password, email } = req.body as RegisterData;
 
   try {
     const passwordHashed = await bcrypt.hash(password, 10);
@@ -18,12 +18,9 @@ const registerUser = async (
       username,
       email,
       password: passwordHashed,
-      picture,
     });
 
-    res
-      .status(201)
-      .json({ user: { id: newUser._id, username, picture, email } });
+    res.status(201).json({ user: { id: newUser._id, username, email } });
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
