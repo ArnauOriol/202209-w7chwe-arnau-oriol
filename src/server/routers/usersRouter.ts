@@ -1,7 +1,8 @@
 import express from "express";
 import registerUser from "../controllers/usersControllers/registerUser.js";
 
-const usersRouer = express();
+// eslint-disable-next-line new-cap
+const usersRouer = express.Router();
 
 usersRouer.post("/signup", registerUser);
 
