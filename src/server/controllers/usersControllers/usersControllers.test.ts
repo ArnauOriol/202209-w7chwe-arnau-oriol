@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../../../database/models/User";
-import registerUser from "./registerUser";
+import registerUser from "./usersControllers";
 import mongoose from "mongoose";
 import type { RegisterData } from "../../types/types";
 

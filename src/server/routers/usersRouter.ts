@@ -1,5 +1,5 @@
 import express from "express";
-import registerUser from "../controllers/usersControllers/registerUser.js";
+import registerUser from "../controllers/usersControllers/usersControllers.js";
 
 // eslint-disable-next-line new-cap
 const usersRouter = express.Router();
