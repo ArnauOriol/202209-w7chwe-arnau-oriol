@@ -141,7 +141,6 @@ describe("Given a loginUser controller", () => {
         body: loginData,
       };
       const userId = new mongoose.Types.ObjectId();
-
       User.findOne = jest.fn().mockResolvedValue({ ...mockUser, _id: userId });
       bcrypt.compare = jest.fn().mockReturnValue(true);
       jwt.sign = jest.fn().mockReturnValue(token);
