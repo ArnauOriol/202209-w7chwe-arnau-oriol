@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import type {
   Credentials,
   RegisterData,
@@ -7,8 +8,7 @@ import type {
 } from "../../types/types";
 import User from "../../../database/models/User.js";
 import CustomError from "../../../CustomError/CustomError.js";
-import jwt from "jsonwebtoken";
-import environment from "../../../loadEnvirontments";
+import environment from "../../../loadEnvirontments.js";
 
 const registerUser = async (
   req: Request,
@@ -65,6 +65,7 @@ export const loginUser = async (
       401,
       "Wrong credentials"
     );
+
     next(error);
     return;
   }
