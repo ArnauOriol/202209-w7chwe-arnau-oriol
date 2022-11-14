@@ -31,17 +31,14 @@ describe("Given a registerUser controller", () => {
         password: hashedPassword,
         _id: userId,
       });
+      const expectedMessage = {
+        message: "User Arnau successfully created",
+      };
 
       await registerUser(req as Request, res as Response, null);
 
       expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
-      expect(res.json).toHaveBeenCalledWith({
-        user: {
-          username: registerData.username,
-          email: registerData.email,
-          id: userId,
-        },
-      });
+      expect(res.json).toHaveBeenCalledWith(expectedMessage);
     });
   });
 

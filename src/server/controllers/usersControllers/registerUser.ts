@@ -20,7 +20,9 @@ const registerUser = async (
       password: passwordHashed,
     });
 
-    res.status(201).json({ user: { id: newUser._id, username, email } });
+    res
+      .status(201)
+      .json({ message: `User ${newUser.username} successfully created` });
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
