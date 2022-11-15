@@ -10,7 +10,7 @@ import User from "../../../database/models/User.js";
 import CustomError from "../../../CustomError/CustomError.js";
 import environment from "../../../loadEnvirontments.js";
 
-const registerUser = async (
+export const registerUser = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -79,5 +79,3 @@ export const loginUser = async (
 
   res.status(200).json({ accessToken: token });
 };
-
-export default registerUser;

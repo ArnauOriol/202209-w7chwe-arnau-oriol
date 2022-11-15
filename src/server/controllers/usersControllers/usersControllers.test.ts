@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import User from "../../../database/models/User";
-import registerUser, { loginUser } from "./usersControllers";
+import { registerUser, loginUser } from "./usersControllers";
 import type { Credentials, RegisterData } from "../../types/types";
 import mockUser from "../../../mocks/mockUser";
 
