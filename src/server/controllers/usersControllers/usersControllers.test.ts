@@ -17,8 +17,6 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-const token = jwt.sign({}, "tokensecret");
-
 describe("Given a registerUser controller", () => {
   describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com and is not in the database", () => {
     test("Then its method status should be called with a 201 and its method json should be called with Arnau data", async () => {
@@ -140,6 +138,8 @@ describe("Given a loginUser controller", () => {
       const req: Partial<Request> = {
         body: loginData,
       };
+      const token = jwt.sign(mockUser, "tokensecret");
+
       const userId = new mongoose.Types.ObjectId();
       User.findOne = jest.fn().mockResolvedValue({ ...mockUser, _id: userId });
       bcrypt.compare = jest.fn().mockReturnValue(true);
