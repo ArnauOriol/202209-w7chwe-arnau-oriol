@@ -5,7 +5,7 @@ import connectDatabase from "../../database/connectDatabase";
 import User from "../../database/models/User";
 import request from "supertest";
 import app from "../app";
-import type { RegisterData } from "../types/types";
+import type { Credentials, RegisterData } from "../types/types";
 
 let server: MongoMemoryServer;
 
@@ -24,7 +24,7 @@ afterAll(async () => {
 });
 
 describe("Given the usersRouter with POST /signup endpoint", () => {
-  describe("When it receives a request with {username: 'Arnau', password: '1234', email: sr@arnau.com} that is not on the database, on its body", () => {
+  describe("When it receives a request with username: 'Arnau', password: '1234' and email: sr@arnau.com that is not on the database, on its body", () => {
     test("Then it should respond with status 201 and the message: 'User Arnau successfully created'", async () => {
       const requestBody: RegisterData = {
         username: "Arnau",
@@ -34,12 +34,12 @@ describe("Given the usersRouter with POST /signup endpoint", () => {
       const expectedStatus = 201;
       const expectedMessage = { message: "User Arnau successfully created" };
 
-      const res = await request(app)
+      const response = await request(app)
         .post("/users/signup")
         .send(requestBody)
         .expect(expectedStatus);
 
-      expect(res.body).toStrictEqual(expectedMessage);
+      expect(response.body).toStrictEqual(expectedMessage);
     });
   });
 
@@ -64,6 +64,48 @@ describe("Given the usersRouter with POST /signup endpoint", () => {
         .expect(expectedStatus);
 
       expect(res.body).toStrictEqual(expectedMessage);
+    });
+  });
+});
+
+describe("Given the usersRouter with POST /login endpoint", () => {
+  describe("When it receives a request with username: 'Pitus' and password: 'tincgana' that is not registered on its body", () => {
+    test("Then it should respond with status code 401 and the message 'Wrong credentials'", async () => {
+      const requestBody: Credentials = {
+        username: "Pitus",
+        password: "tincgana",
+      };
+      const expectedStatus = 401;
+      const expectedMessage = { error: "Wrong credentials" };
+
+      const response = await request(app)
+        .post("/users/login")
+        .send(requestBody)
+        .expect(expectedStatus);
+
+      expect(response.body).toStrictEqual(expectedMessage);
+    });
+  });
+
+  describe("When it receives a request with username: 'patatas' and password: 'fritas' that is registered on its body", () => {
+    test("Then it should respond with status 200 and a token", async () => {
+      await User.create({
+        username: "patatas",
+        password: await bcrypt.hash("fritas", 10),
+        email: "patatas@fritas.com",
+      });
+      const requestBody: Credentials = {
+        username: "patatas",
+        password: "fritas",
+      };
+      const expectedStatus = 200;
+
+      const response = await request(app)
+        .post("/users/login")
+        .send(requestBody)
+        .expect(expectedStatus);
+
+      expect(response.body).toHaveProperty("accessToken");
     });
   });
 });
