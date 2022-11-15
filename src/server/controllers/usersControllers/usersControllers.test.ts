@@ -1,14 +1,22 @@
+import "../../../loadEnvirontments";
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import User from "../../../database/models/User";
-import registerUser from "./usersControllers";
 import mongoose from "mongoose";
-import type { RegisterData } from "../../types/types";
+import jwt from "jsonwebtoken";
+import User from "../../../database/models/User";
+import registerUser, { loginUser } from "./usersControllers";
+import type { Credentials, RegisterData } from "../../types/types";
+import mockUser from "../../../mocks/mockUser";
 
 const res: Partial<Response> = {
   status: jest.fn().mockReturnThis(),
   json: jest.fn(),
 };
+const next = jest.fn();
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("Given a registerUser controller", () => {
   describe("When it receives a request with username 'Arnau', password '1234', and email 123@arnau.com and is not in the database", () => {
@@ -52,7 +60,6 @@ describe("Given a registerUser controller", () => {
       const req: Partial<Request> = {
         body: registerData,
       };
-      const next = jest.fn();
       const error = new Error("Cosas");
 
       User.create = jest.fn().mockRejectedValue(error);
@@ -60,6 +67,88 @@ describe("Given a registerUser controller", () => {
       await registerUser(req as Request, res as Response, next as NextFunction);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a loginUser controller", () => {
+  describe("When it receives a request with username 'manoli' that is not in the database", () => {
+    test("Then it should call the next function with an error", async () => {
+      const loginData: Credentials = {
+        username: "manoli",
+        password: "unaqueoblidaria",
+      };
+      const req: Partial<Request> = {
+        body: loginData,
+      };
+      const expectedMessage = new Error("Username not found");
+
+      User.findOne = jest.fn();
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(next).toHaveBeenCalledWith(expectedMessage);
+    });
+  });
+
+  describe("When it receives a request with username 'round' and an incorrect password", () => {
+    test("Then it should call the next function with an error", async () => {
+      const loginData: Credentials = {
+        username: "round",
+        password: "puchito",
+      };
+      const req: Partial<Request> = {
+        body: loginData,
+      };
+      const expectedMessage = new Error("Password is incorrect");
+      bcrypt.hash = jest.fn().mockReturnValue("ctangana");
+
+      User.findOne = jest.fn().mockResolvedValue(mockUser);
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(next).toHaveBeenCalledWith(expectedMessage);
+    });
+  });
+
+  describe("When it receives a request with username 'round' and the correct password 'ctangana'", () => {
+    test("Then it should call its response method status with a 200", async () => {
+      const loginData: Credentials = {
+        username: "round",
+        password: "ctangana",
+      };
+      const req: Partial<Request> = {
+        body: loginData,
+      };
+      const userId = new mongoose.Types.ObjectId();
+      const expectedStatusCode = 200;
+      bcrypt.compare = jest.fn().mockReturnValue(true);
+
+      User.findOne = jest.fn().mockResolvedValue({ ...mockUser, _id: userId });
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
+    });
+
+    test("Then it should call its method json with a token", async () => {
+      const loginData: Credentials = {
+        username: "round",
+        password: "ctangana",
+      };
+      const req: Partial<Request> = {
+        body: loginData,
+      };
+      const token = jwt.sign(mockUser, "tokensecret");
+
+      const userId = new mongoose.Types.ObjectId();
+      User.findOne = jest.fn().mockResolvedValue({ ...mockUser, _id: userId });
+      bcrypt.compare = jest.fn().mockReturnValue(true);
+      jwt.sign = jest.fn().mockReturnValue(token);
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(res.json).toHaveBeenCalledWith({ accessToken: token });
     });
   });
 });

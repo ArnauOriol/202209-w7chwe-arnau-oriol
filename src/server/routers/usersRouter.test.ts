@@ -44,7 +44,7 @@ describe("Given the usersRouter with POST /signup endpoint", () => {
   });
 
   describe("When it receives a request with {username: 'Yo', password: '33', email: y@o.com} that is on the database, on its body", () => {
-    test("Then it should respond with", async () => {
+    test("Then it should respond with status 500 and the message: 'Error on registration'", async () => {
       await User.create({
         username: "Yo",
         password: await bcrypt.hash("33", 10),
