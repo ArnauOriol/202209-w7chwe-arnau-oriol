@@ -1,3 +1,4 @@
+import "../../../loadEnvirontments";
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
